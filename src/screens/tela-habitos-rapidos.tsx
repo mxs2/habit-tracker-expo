@@ -20,21 +20,18 @@ export function QuickHabitsScreen() {
 
   const handleAdd = () => {
     if (!text.trim()) return;
-    // TODO Ex 1.1: Adicionar novo hábito de forma imutável (usando ...prev) e limpar 'text'
-    void setHabits;
+    const novo: HabitItem = { id: Date.now().toString(), title: text.trim(), done: false };
+    setHabits((prev) => [...prev, novo]);
+    setText('');
   };
 
   const handleToggle = (id: string) => {
-    // TODO Ex 1.2: Inverter 'done' com .map() e somar +1 em 'totalClicks' com prev => prev + 1
-    void id;
-    void setHabits;
-    void setTotalClicks;
+    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, done: !h.done } : h)));
+    setTotalClicks((prev) => prev + 1);
   };
 
   const handleRemove = (id: string) => {
-    // TODO Ex 1.3: Remover hábito com .filter()
-    void id;
-    void setHabits;
+    setHabits((prev) => prev.filter((h) => h.id !== id));
   };
 
   return (
