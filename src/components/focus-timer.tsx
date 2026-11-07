@@ -9,10 +9,14 @@ export default function FocusTimer() {
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    // TODO Ex 2.1: Se não estiver rodando (!isRunning), sair cedo
-    // TODO Ex 2.2: Criar setInterval de 1000ms incrementando 'seconds' com prev => prev + 1
-    // TODO Ex 2.3: Retornar função de cleanup com clearInterval(intervalId)
-  }, [/* TODO Ex 2.4: Dependências */]);
+    if (!isRunning) return;
+
+    const intervalId = setInterval(() => {
+      setSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [isRunning]);
 
   return (
     <View style={styles.box}>
