@@ -400,22 +400,36 @@ Resoluções das Partes 1 e 2 da Aula 7 (**Navegação avançada com Expo Router
 
 ## Estado atual — Aula 8
 
-Esqueletos (scaffolds) dos Exercícios 1 a 5 e da Atividade Aplicada da Aula 8 (**Hooks (`useState`, `useEffect`, `useContext`), Estado Global com `zustand` e Persistência Local em Disco (`AsyncStorage`, middleware `persist` e `expo-sqlite`)**).
+Resolução dos Exercícios 1 a 5 e da Atividade Aplicada da Aula 8 (**Hooks (`useState`, `useEffect`, `useContext`), Estado Global com `zustand` e Persistência Local em Disco (`AsyncStorage`, middleware `persist` e `expo-sqlite`)**).
 
-### Exercícios Guiados e Atividade Aplicada (`src/`)
+### Exercícios Guiados (`src/`)
 
-| Arquivo | O que é | Referência em `exercises.md` |
+| Arquivo | O que foi implementado | Referência em `exercises.md` |
 |---|---|---|
-| `src/screens/tela-habitos-rapidos.tsx` (`src/app/quick-habits.tsx`) | Esqueleto `QuickHabitsScreen` para praticar imutabilidade e atualização funcional com `useState` | Exercício 1 |
-| `src/components/focus-timer.tsx` | Esqueleto `FocusTimer` com `useEffect`, `setInterval` e função de cleanup | Exercício 2 e Atividade Aplicada |
-| `src/context/theme-context.tsx` | Esqueleto `ThemeContext`, `ThemeProvider` e custom hook `useTheme` (com persistência via `AsyncStorage`) | Exercício 3 e Atividade Aplicada |
-| `src/screens/tela-configuracoes.tsx` (`src/app/settings.tsx`) | Esqueleto da tela de Configurações consumindo `useTheme()` com `<Switch>` | Exercício 3 |
-| `src/store/use-habit-store.ts` | Esqueleto da store global `useHabitStore` com `zustand` + middleware `persist` (`AsyncStorage`) | Exercícios 4, 5 (Parte A) e Atividade Aplicada |
-| `src/services/focus-db.ts` | Esqueleto do banco relacional SQLite (`openFocusDb`, `saveFocusSession`, `listFocusSessions`) com `expo-sqlite` | Exercício 5 (Parte B) |
-| `src/app/_layout.tsx` | Layout raiz envolvendo o navegador com `<ThemeProvider>` | Atividade Aplicada |
-| `src/screens/tela-habitos.tsx` (`src/app/(tabs)/index.tsx`) | Aba Home preparada para conectar `useState` local (input) + `useHabitStore` + `useTheme` | Atividade Aplicada |
-| `src/screens/tela-estatisticas.tsx` (`src/app/(tabs)/stats.tsx`) | Aba Estatísticas preparada para ler seletores do `useHabitStore` e alternar tema com `useTheme` | Exercício 4 e Atividade Aplicada |
-| `src/screens/tela-detalhe-habito.tsx` (`src/app/habit/[id].tsx`) | Tela de detalhe do hábito com seletor por `id`, `FocusTimer`, `toggleHabit` e `removeHabit` | Atividade Aplicada |
+| `src/screens/tela-habitos-rapidos.tsx` (`src/app/quick-habits.tsx`) | `QuickHabitsScreen`: adição com spread (`[...prev, novo]`), alternância de `done` com `.map()`, remoção com `.filter()` e contador `totalClicks` com atualização funcional | Exercício 1 |
+| `src/components/focus-timer.tsx` | `FocusTimer`: sai cedo quando pausado, `setInterval` de 1000 ms com `prev => prev + 1`, cleanup com `clearInterval` e dependência `[isRunning]` | Exercício 2 |
+| `src/context/theme-context.tsx` | `ThemeContext`, `ThemeProvider` com `isDark`/`toggleTheme` e `useTheme()`, que lança erro se usado fora do Provider | Exercício 3 |
+| `src/screens/tela-configuracoes.tsx` (`src/app/settings.tsx`) | `<Switch>` ligado a `isDark` e `toggleTheme`; fundo e texto mudam com o tema | Exercício 3 |
+| `src/store/use-habit-store.ts` | `useHabitStore` tipada com `addHabit`, `toggleHabit` e `removeHabit` imutáveis, envolvida em `persist` + `createJSONStorage(() => AsyncStorage)` com a chave `@habits:store` | Exercícios 4 e 5 (Parte A) |
+| `src/screens/tela-estatisticas.tsx` (`src/app/(tabs)/stats.tsx`) | Total, concluídos, pendentes e porcentagem calculados a partir do seletor `useHabitStore((state) => state.habits)` | Exercício 4 |
+| `src/services/focus-db.ts` | Tabela `focus_logs` (`execAsync`), `saveFocusSession` com `runAsync` e placeholders `(?, ?)`, `listFocusSessions` com `getAllAsync<FocusLog>` | Exercício 5 (Parte B) |
 
+### Atividade Aplicada (`src/`)
 
+| Arquivo | O que foi implementado | Requisito |
+|---|---|---|
+| `src/app/_layout.tsx` | `<ThemeProvider>` envolvendo o `<Drawer>` raiz | 1 |
+| `src/context/theme-context.tsx` | Carrega o tema com `AsyncStorage.getItem` no `useEffect(..., [])` e salva com `AsyncStorage.setItem` ao alternar (chave `@habits:theme`) | 1 |
+| `src/store/use-habit-store.ts` | Store global persistida em disco | 2 |
+| `src/screens/tela-habitos.tsx` (`src/app/(tabs)/index.tsx`) | `useState` só para o texto do input; lista vinda da store; checkbox chama `toggleHabit`; título navega para `/habit/[id]` | 3 |
+| `src/screens/tela-estatisticas.tsx` (`src/app/(tabs)/stats.tsx`) | Contadores em tempo real e `<Switch>` do tema | 4 |
+| `src/screens/tela-detalhe-habito.tsx` (`src/app/habit/[id].tsx`) | Hábito buscado por seletor a partir do `id`; todos os hooks antes do `if (!habit)`; concluir/desmarcar; excluir + `router.back()`; cronômetro de foco | 5 |
 
+### Limitações conhecidas
+
+- **Hidratação assíncrona.** O `AsyncStorage` responde depois do primeiro render. Ao abrir o app, a tela aparece por um instante no tema claro e com os 2 hábitos iniciais, até os dados salvos carregarem.
+- **Ids com `Date.now()`.** Dois hábitos criados no mesmo milissegundo teriam o mesmo id. Num app de um usuário isso é improvável.
+- **Exclusão na tela de detalhe.** `removeHabit` roda antes de `router.back()`, então a tela pode mostrar "Hábito não encontrado" por um frame antes de voltar.
+- **Telas antigas sem tema.** O tema escuro foi aplicado às telas da atividade (Home, Stats, Detalhe, Configurações). As telas de aulas anteriores (Sobre, Galeria, Registrar foto) continuam no tema claro.
+
+O uso de IA nesta aula está declarado em [`RELATORIO_IA.md`](RELATORIO_IA.md).
