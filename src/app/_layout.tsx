@@ -6,7 +6,6 @@ import { Drawer } from 'expo-router/drawer';
 import { ThemeProvider } from '../context/theme-context';
 
 export default function RootLayout() {
-  // TODO Atividade Aplicada (Requisito 1): Envolver o navegador raiz com <ThemeProvider>
   return (
     <ThemeProvider>
       <Drawer backBehavior="history" screenOptions={{ drawerActiveTintColor: '#FF6002' }}>

@@ -18,14 +18,24 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    // TODO Atividade Aplicada 1.1: Carregar a preferência de tema salva com AsyncStorage.getItem(THEME_STORAGE_KEY)
-    void AsyncStorage;
-    void THEME_STORAGE_KEY;
+    let ativo = true;
+    AsyncStorage.getItem(THEME_STORAGE_KEY)
+      .then((valor) => {
+        if (ativo && valor !== null) setIsDark(JSON.parse(valor) === true);
+      })
+      .catch((erro) => console.warn('Falha ao carregar o tema', erro));
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   const toggleTheme = () => {
-    // TODO Atividade Aplicada 1.2: salvar a nova preferência no disco com AsyncStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(nextValue))
+    // setItem fora do updater: o StrictMode pode chamar o updater duas vezes
+    const nextValue = !isDark;
     setIsDark((prev) => !prev);
+    AsyncStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(nextValue)).catch((erro) =>
+      console.warn('Falha ao salvar o tema', erro),
+    );
   };
 
   return (
