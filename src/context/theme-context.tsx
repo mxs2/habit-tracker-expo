@@ -12,11 +12,9 @@ type ThemeContextType = {
 
 const THEME_STORAGE_KEY = '@habits:theme';
 
-// TODO Ex 3.1: Criar ThemeContext com createContext<ThemeContextType | undefined>(undefined)
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: PropsWithChildren) {
-  // TODO Ex 3.2: Criar estado isDark (useState(false)) e função toggleTheme
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -26,12 +24,10 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, []);
 
   const toggleTheme = () => {
-    // TODO Ex 3.2 / Atividade Aplicada 1.2: Alternar isDark com atualização funcional (prev => !prev)
-    // e salvar a nova preferência no disco com AsyncStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(nextValue))
-    void setIsDark;
+    // TODO Atividade Aplicada 1.2: salvar a nova preferência no disco com AsyncStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(nextValue))
+    setIsDark((prev) => !prev);
   };
 
-  // TODO Ex 3.3: Retornar <ThemeContext.Provider value={{ isDark, toggleTheme }}>{children}</ThemeContext.Provider>
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
@@ -40,10 +36,9 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 }
 
 export function useTheme(): ThemeContextType {
-  // TODO Ex 3.4: Ler contexto com useContext(ThemeContext) e lançar erro se usado fora do ThemeProvider
   const context = useContext(ThemeContext);
   if (!context) {
-    return { isDark: false, toggleTheme: () => {} };
+    throw new Error('useTheme deve ser usado dentro de um <ThemeProvider>');
   }
   return context;
 }

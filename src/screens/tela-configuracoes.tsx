@@ -5,20 +5,20 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import { useTheme } from '../context/theme-context';
 
 export function TelaConfiguracoes() {
-  // TODO Ex 3.5: Consumir { isDark, toggleTheme } de useTheme()
   const { isDark, toggleTheme } = useTheme();
-  void isDark;
-  void toggleTheme;
+  const fundo = isDark ? '#121212' : '#FFFFFF';
+  const texto = isDark ? '#F5F5F5' : '#1A1A1A';
 
   return (
-    // TODO Ex 3.6: Alterar backgroundColor e cor do texto conforme isDark e ligar o <Switch> a isDark e toggleTheme
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Configurações</Text>
-      <Text style={styles.texto}>Gerencie preferências e o tema do aplicativo.</Text>
+    <View style={[styles.container, { backgroundColor: fundo }]}>
+      <Text style={[styles.titulo, { color: texto }]}>Configurações</Text>
+      <Text style={[styles.texto, { color: texto }]}>
+        Gerencie preferências e o tema do aplicativo.
+      </Text>
 
-      <View style={styles.linhaTema}>
-        <Text style={styles.rotulo}>Modo Escuro</Text>
-        <Switch value={false} onValueChange={() => {}} />
+      <View style={[styles.linhaTema]}>
+        <Text style={[styles.rotulo, { color: texto }]}>Modo Escuro</Text>
+        <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
     </View>
   );
@@ -29,7 +29,7 @@ export default TelaConfiguracoes;
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24 },
   titulo: { fontSize: 20, fontWeight: '700' },
-  texto: { fontSize: 16, color: '#555', textAlign: 'center' },
+  texto: { fontSize: 16, textAlign: 'center' },
   linhaTema: {
     flexDirection: 'row',
     alignItems: 'center',
