@@ -11,21 +11,22 @@ export type FocusLog = {
 
 export async function openFocusDb() {
   const db = await SQLite.openDatabaseAsync('habits.db');
-  // TODO Ex 5.2: Criar tabela focus_logs (id, habitId, seconds) com db.execAsync
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS focus_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      habitId TEXT NOT NULL,
+      seconds INTEGER NOT NULL
+    );
+  `);
   return db;
 }
 
 export async function saveFocusSession(habitId: string, seconds: number) {
   const db = await openFocusDb();
-  // TODO Ex 5.3: Inserir registro com db.runAsync e placeholders (?, ?)
-  void db;
-  void habitId;
-  void seconds;
+  await db.runAsync('INSERT INTO focus_logs (habitId, seconds) VALUES (?, ?)', habitId, seconds);
 }
 
 export async function listFocusSessions(): Promise<FocusLog[]> {
   const db = await openFocusDb();
-  // TODO Ex 5.4: Buscar todos os registros com db.getAllAsync<FocusLog>
-  void db;
-  return [];
+  return db.getAllAsync<FocusLog>('SELECT id, habitId, seconds FROM focus_logs');
 }
