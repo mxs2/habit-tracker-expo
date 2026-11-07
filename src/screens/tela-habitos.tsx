@@ -39,17 +39,13 @@ export function TelaHabitos() {
   const [novoHabitoTexto, setNovoHabitoTexto] = useState('');
   const [permissionGranted, setPermissionGranted] = useState(false);
 
-  // TODO Atividade Aplicada 3.1: Consumir isDark de useTheme() e habits, addHabit, toggleHabit, removeHabit de useHabitStore
   const { isDark } = useTheme();
+  const fundo = isDark ? '#121212' : cores.fundo;
+  const cartao = isDark ? '#1E1E1E' : cores.cartao;
+  const texto = isDark ? '#F5F5F5' : cores.texto;
   const habits = useHabitStore((s) => s.habits);
   const addHabit = useHabitStore((s) => s.addHabit);
   const toggleHabit = useHabitStore((s) => s.toggleHabit);
-  const removeHabit = useHabitStore((s) => s.removeHabit);
-
-  void isDark;
-  void addHabit;
-  void toggleHabit;
-  void removeHabit;
 
   useEffect(() => {
     async function requestPermission() {
@@ -119,7 +115,8 @@ export function TelaHabitos() {
 
   function handleAdicionarHabito() {
     if (!novoHabitoTexto.trim()) return;
-    // TODO Atividade Aplicada 3.2: Chamar addHabit(novoHabitoTexto) e limpar o input local
+    addHabit(novoHabitoTexto);
+    setNovoHabitoTexto('');
   }
 
   function abrirDetalhe(id: string) {
@@ -130,12 +127,13 @@ export function TelaHabitos() {
   }
 
   return (
-    <View style={styles.tela}>
+    <View style={[styles.tela, { backgroundColor: fundo }]}>
       <View style={styles.conteudo}>
         <View style={styles.linhaInput}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: cartao, color: texto }]}
             placeholder="Novo hábito..."
+            onSubmitEditing={handleAdicionarHabito}
             value={novoHabitoTexto}
             onChangeText={setNovoHabitoTexto}
           />
@@ -149,15 +147,19 @@ export function TelaHabitos() {
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <View style={styles.separador} />}
           renderItem={({ item }) => (
-            <View style={styles.card}>
-              {/* TODO Atividade Aplicada 3.3: Tocar no checkbox chama toggleHabit(item.id) */}
-              <Pressable onPress={() => {}} style={styles.checkbox}>
+            <View style={[styles.card, { backgroundColor: cartao }]}>
+              <Pressable onPress={() => toggleHabit(item.id)} style={styles.checkbox}>
                 <Text style={styles.checkboxTexto}>{item.done ? '✅' : '⬜'}</Text>
               </Pressable>
 
-              {/* TODO Atividade Aplicada 3.4: Tocar no título navega para /habit/[id] */}
               <Pressable onPress={() => abrirDetalhe(item.id)} style={styles.cardTitulo}>
-                <Text style={[styles.tituloHabito, item.done && styles.tituloConcluido]}>
+                <Text
+                  style={[
+                    styles.tituloHabito,
+                    { color: texto },
+                    item.done && styles.tituloConcluido,
+                  ]}
+                >
                   {item.title}
                 </Text>
               </Pressable>
